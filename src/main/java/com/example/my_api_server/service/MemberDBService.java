@@ -31,6 +31,7 @@ public class MemberDBService {
             .email(email)
             .password(password)
             .build();
+        //0101010101010101
 
         //저장
         Member savedMember = memberDBRepo.save(member); //1s
@@ -66,5 +67,10 @@ public class MemberDBService {
         log.info("알림 전송완료!");
     }
 
+
+    public void add() {
+        int i = 1;
+        i++;
+    }
 
 }

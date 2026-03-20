@@ -1,0 +1,23 @@
+package com.example.my_api_server.service.dto;
+
+import com.example.my_api_server.entity.OrderStatus;
+import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor(staticName = "of")
+@Builder
+public class OrderResponseDto {
+
+    private LocalDateTime orderCompletedTime; //주문 완료 시간
+
+    private OrderStatus orderStatus; //주문 상태
+
+    private boolean isSuccess; //주문성공 여부
+
+    //주문자
+
+    //주문 기타 정보
+}

@@ -33,6 +33,6 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: update #실무에선 none, validated
     show-sql: true
     open-in-view: false
