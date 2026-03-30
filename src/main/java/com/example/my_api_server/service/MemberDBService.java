@@ -39,8 +39,9 @@ public class MemberDBService {
         //기능 안정성 + 예외 상황 + 알림이 몇초가 x -> 전체의 총 서버의 응답시간은 단축되지 않을까요?
 
         //기존의 로직에서는 값이 바뀌거나, 리턴값이 바뀌거나, 파라미터 추가되거나하면 기존 로직이 영향을 입는다(Side Effect)
-        memberPointService.sendEmail(new MemberSignUpEvent(savedMember.getId(),
-            savedMember.getEmail(), "1"));//기존로직(다른 서비스에서 메일 보냈다)
+        memberPointService.sendEmail(
+            new MemberSignUpEvent(savedMember.getId(), savedMember.getEmail(), "1"),
+            1L);//기존로직(다른 서비스에서 메일 보냈다)
 
         //변경지점이 되게 작아지게되는 유지보수성 Up(강결합 해결)
         publisher.publishEvent( //리팩토링 후 로직(이벤트)

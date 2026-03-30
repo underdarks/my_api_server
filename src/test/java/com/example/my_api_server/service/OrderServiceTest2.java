@@ -17,7 +17,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.slf4j.Logger;
@@ -33,7 +32,6 @@ class OrderServiceTest2 {
     @Autowired
     OrderService orderService;
 
-
     @Autowired
     private OrderRepo orderRepository;
 
@@ -46,19 +44,6 @@ class OrderServiceTest2 {
     @Autowired
     private MemberDBRepo memberRepository;
 
-
-    @Test
-    @DisplayName("리팩토링 코드에 대한 테스트 코드 작성")
-    public void OrderServiceTest() {
-        //given
-//        OrderResponseDto order = orderService.createOrder(new OrderCreateDto(1L, ));
-//
-//        //when
-//
-//        //then
-//        assertThat(order).isNull();
-//        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PENDING);
-    }
 
     private Member saveMember() {
         return memberRepository.save(Member.builder()
@@ -144,7 +129,7 @@ class OrderServiceTest2 {
             executor.submit(() -> {
                 try {
                     startLatch.await(); //모든 스레드 여기서 대기 후
-                    orderService.createOrderWithXLock(request); //로직 실행(race-condition 발생)
+                    orderService.createOrderPLock(request); //로직 실행(race-condition 발생)
                     successCount.incrementAndGet(); //주문 성공 카운트
                 } catch (Exception e) {
                     failCount.incrementAndGet(); //실패 처리 카운트

@@ -49,6 +49,6 @@ public class MemberPointService {
 
         //코드가 변경됬습니다
         //알림보내는데 기타 로직이
-        return -1;
+        return "1";
     }
 }

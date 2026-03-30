@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,6 +38,8 @@ public class Product { //상품
 
     private Long stock; //재고
 
+    @Version
+    private Long version; //버전
 
     //필요한건만 바꿀수있게 Setter처럼 변경할수 있게하고, 네이밍은 의미있는 메서드로 만들어둡니다.
     public void changeProductName(String changeProductName) {
