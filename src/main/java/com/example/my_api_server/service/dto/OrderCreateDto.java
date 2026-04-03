@@ -10,6 +10,7 @@ public record OrderCreateDto(
     List<Long> productId, //주문 상품 ID들
 
     List<Long> count //주문 수량
+
 ) {
 
 }

@@ -56,4 +56,14 @@ public class Product { //상품
         this.stock -= subStock; //현재 재고 - 감소할 재고
     }
 
+    //구매 가능 여부 확인
+    //캡슐화를하게되면 변경지점이 되게 작아진다. 코드의 유지보수(변화)가 적어지게되요
+    public void isBuyAvaliable(Long count) {
+        if (getStock() - count < 0 &&
+            getProductType().equals(ProductType.ACCESSORIES)
+            || getProductType().equals(ProductType.CLOTHES)
+        ) {
+            throw new RuntimeException("재고가 음수이니 주문 할 수 없습니다!");
+        }
+    }
 }

@@ -29,15 +29,23 @@ public class OrderService {
     private final OrderRepo orderRepo;
     private final MemberDBRepo memberRepo;
     private final ProductRepo productRepo;
-    private final MemberPointService memberPointService;
+    //private final MemberPointService memberPointService;
+
 
     //주문 생성
     //Tomcat의 wt-1
     @Transactional
     public OrderResponseDto createOrder(OrderCreateDto dto) {
         Member member = memberRepo.findById(dto.memberId()).orElseThrow();
-        LocalDateTime orderTime = LocalDateTime.now();
+        LocalDateTime orderTime = LocalDateTime.now(); //2026-04-03T12:16:19.375719
 
+        //주문 시간에 대해서 값 범위 값을 통해서 로직을 수행한다고 가정
+        if (orderTime.getHour() == 13) {
+            //로직 실행(점심시간 이벤트 쿠폰 발행)
+            return null;
+        }
+
+        //사전 조건의 데이터이지 중요도가 그렇게 높지않은거같아요(핵심 비즈니스 로직 x)
         Order order = Order.builder()
             .buyer(member)
             .orderStatus(OrderStatus.PENDING)
@@ -59,7 +67,9 @@ public class OrderService {
                 //재고에대해서 차감을 해야한다.(음수 처리x)
                 Product product = products.get(idx);
 
+                //만약에 변경이된다면 사이드 이펙트(어떻게하면 다른 쪾에서 영향을 적게받을 수 있을까?)
                 //현재 재고에서 주문재고 감했을때 음수이면 <0 예외터트린다!(주문못하게 막는다!)
+                //캡슐화가 안되어있다.
                 if (product.getStock() - dto.count().get(idx) < 0) {
                     throw new RuntimeException("재고가 음수이니 주문 할 수 없습니다!");
                 }
