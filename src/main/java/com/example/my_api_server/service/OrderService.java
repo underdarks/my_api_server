@@ -31,27 +31,25 @@ public class OrderService {
     private final ProductRepo productRepo;
     //private final MemberPointService memberPointService;
 
-
     //주문 생성
     //Tomcat의 wt-1
+
+    /**
+     * [좋은 코드 작성법] 테스트가 성공햇다고 어 잘되네? (끝x) 코드는 100% 근접하게 좋아지려고 꾸준히 노력해야 한다. - 유지보수가 좋은 코드 -
+     * OOP(ex.캡슐화 적용, SRP, DIP, OCP 등 참고) - DDD - 기타 등등.. - 확장성 있는 코드 - 테스트하기 좋은 코드 - 남이 읽기 좋은 코드 -
+     * 기타 등등..(클린 코드 참고)
+     */
     @Transactional
     public OrderResponseDto createOrder(OrderCreateDto dto) {
-        Member member = memberRepo.findById(dto.memberId()).orElseThrow();
-        LocalDateTime orderTime = LocalDateTime.now(); //2026-04-03T12:16:19.375719
-
-        //주문 시간에 대해서 값 범위 값을 통해서 로직을 수행한다고 가정
-        if (orderTime.getHour() == 13) {
-            //로직 실행(점심시간 이벤트 쿠폰 발행)
-            return null;
-        }
+        Member member = memberRepo.findById(dto.memberId())
+            .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
+//        //주문 시간에 대해서 값 범위 값을 통해서 로직을 수행한다고 가정
+//        if (orderTime.getHour() == 13) {
+//            //로직 실행(점심시간 이벤트 쿠폰 발행)
+//            return null;
+//        }
 
         //사전 조건의 데이터이지 중요도가 그렇게 높지않은거같아요(핵심 비즈니스 로직 x)
-        Order order = Order.builder()
-            .buyer(member)
-            .orderStatus(OrderStatus.PENDING)
-            .orderTime(orderTime)
-            .build();
-
         //jpql,quierydsl, jdbc template
 
         //상품 id들을 통해서 상품들을 조회할겁니다.(N번 조회)
@@ -60,32 +58,26 @@ public class OrderService {
 //        List<Product> products = dto.productId().stream()
 //            .map((pId) -> productRepo.findById(pId).orElseThrow())
 //            .toList();
-
+        Order order = Order.createOrder(member, dto.orderTime());
         List<Product> products = productRepo.findAllById(dto.productId()); //IN 쿼리
         List<OrderProduct> orderProducts = IntStream.range(0, dto.count().size())
             .mapToObj(idx -> {
                 //재고에대해서 차감을 해야한다.(음수 처리x)
                 Product product = products.get(idx);
+                Long orderCount = dto.count().get(idx);
 
                 //만약에 변경이된다면 사이드 이펙트(어떻게하면 다른 쪾에서 영향을 적게받을 수 있을까?)
                 //현재 재고에서 주문재고 감했을때 음수이면 <0 예외터트린다!(주문못하게 막는다!)
                 //캡슐화가 안되어있다.
-                if (product.getStock() - dto.count().get(idx) < 0) {
-                    throw new RuntimeException("재고가 음수이니 주문 할 수 없습니다!");
-                }
-
+                product.buyProductWithStock(orderCount);
                 //재고 감소
                 //update product set stock = stock - 1 where pk =1;(더티체킹, 스냅샷 값을 비교한다!)
-                product.decreaseStock(dto.count().get(idx));
 
-                return OrderProduct.builder()
-                    .order(order)
-                    .number(dto.count().get(idx)) //product에 맞는 주문개수를 찾는다!
-                    .product(products.get(idx))
-                    .build();
+                return order.createOrderProduct(orderCount, product);
             })
             .toList();
 
+        order.addOrderProducts(orderProducts);
 //        Map<Product, Long> productCountMap = new HashMap<>();
 //        for (int i = 0; i < dto.count().size(); i++) {
 //            productCountMap.put(products.get(i), dto.count().get(i));
@@ -102,23 +94,19 @@ public class OrderService {
 //            .toList();
 
         //OrderProduct 생명주기 Order와 Sync 생성 완료(Order 저장되면 OP 저장)
-        order.addOrderProducts(orderProducts);
-
         //order save를 하기전에는 영속화x
+
         Order savedOrder = orderRepo.save(order); //wt1- 영속성 컨텍스트가 1개 관리
         //order save를 한 후 에는 영속화(내자식으로 관리를 하겟다)
 
         //Entity -> Dto로 변환
-        OrderResponseDto orderResponseDto = OrderResponseDto.of(
+        return OrderResponseDto.of(
             savedOrder.getOrderTime(),
             OrderStatus.COMPLETED,
             true);
-
 //        String s = memberPointService.sendEmail(new MemberSignUpEvent(1L, "fds", "fds"));
 
         //업데이트를 한번에 1억개 -> 10000개씩 쪼개서 10000단위(청크) 약간의 텀을두거나 잘게쪼개서 update, DB입장에서는 부담이 조금 적어기겟죠(JPA Batch, JDBC BATCH)
-
-        return orderResponseDto;
     }
 
 

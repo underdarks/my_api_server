@@ -46,7 +46,26 @@ public class Order {
     //주문(1) <-> 주문상품(여러 상품들) <-> 상품(1)
     @Column(nullable = false)
     private LocalDateTime orderTime; //주문 시간
-    
+
+    //정적 팩토리 패턴
+    public static Order createOrder(Member member, LocalDateTime orderTime) {
+        Order order = Order.builder()
+            .buyer(member)
+            .orderStatus(OrderStatus.PENDING)
+            .orderTime(orderTime)
+            .build();
+
+        return order;
+    }
+
+    //루트 엔티티(에그리거트 루트) 내부 응집도 상승
+    public OrderProduct createOrderProduct(Long orderCount, Product product) {
+        return OrderProduct.builder()
+            .order(this)
+            .number(orderCount) //product에 맞는 주문개수를 찾는다!
+            .product(product)
+            .build();
+    }
 
     //양방향 매핑
     public void addOrderProducts(List<OrderProduct> orderProduct) {
