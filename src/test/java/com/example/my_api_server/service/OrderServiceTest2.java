@@ -2,6 +2,7 @@ package com.example.my_api_server.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.example.my_api_server.config.TestContainerConfig;
 import com.example.my_api_server.entity.Member;
 import com.example.my_api_server.entity.Product;
 import com.example.my_api_server.entity.ProductType;
@@ -23,8 +24,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
+@Import(TestContainerConfig.class)
+@ActiveProfiles("test")
 class OrderServiceTest2 {
 
     private static final Logger log = LoggerFactory.getLogger(OrderServiceTest2.class);
@@ -95,7 +100,7 @@ class OrderServiceTest2 {
      * @stock : 재고 수
      * @quantity : 주문 개수
      */
-    @ParameterizedTest
+    @ParameterizedTest //반복 테스트
     @CsvSource({
         "1, 1, 1",
         "2, 2, 1",
@@ -161,6 +166,7 @@ class OrderServiceTest2 {
 
             int expectedRemaining = stock - (expectedSuccess * orderQty.intValue()); //예상 잔여 재고
 
+            //현재 재고(product 생성 시점) - 요청 주문 재고(요청량) = 최신재고(결과값이 반영된 재고)
             assertThat(p.getStock()).isEqualTo(expectedRemaining); //현재 재고랑 잔여 재고 같은지 확인
         }
 

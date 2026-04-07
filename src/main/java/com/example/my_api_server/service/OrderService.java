@@ -110,7 +110,7 @@ public class OrderService {
     }
 
 
-    //비관전 락 예시
+    //비관적 락 예시
     @Transactional
     public OrderResponseDto createOrderPLock(OrderCreateDto dto) {
         Member member = memberRepo.findById(dto.memberId()).orElseThrow();

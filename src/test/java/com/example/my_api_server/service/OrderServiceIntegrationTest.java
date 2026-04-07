@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.example.my_api_server.common.MemberFixture;
 import com.example.my_api_server.common.ProductFixture;
+import com.example.my_api_server.config.TestContainerConfig;
 import com.example.my_api_server.entity.Member;
 import com.example.my_api_server.entity.Product;
 import com.example.my_api_server.repo.MemberDBRepo;
@@ -20,9 +21,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest //Spring DI를 통해 모든 빈(Bean)주입 해주는 어노테이션
+@Import(TestContainerConfig.class)
 @ActiveProfiles("test") //application-test.yml 값을 읽는다!
 public class OrderServiceIntegrationTest {
 
