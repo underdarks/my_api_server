@@ -19,7 +19,7 @@ export const options = {
 };
 
 export default function () {
-  const url = 'https://ec2-my-server.shop/api/v1/orders'; // 서버 주소에 맞게 수정하세요
+  const url = 'http://localhost:8080/api/v1/orders'; // 서버 주소에 맞게 수정하세요
 
   // DTO 구조에 맞춘 페이로드 설정(HTTP Body)
   const payload = JSON.stringify({
