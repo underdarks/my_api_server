@@ -13,7 +13,7 @@ public class HealthCheckController { //ALB가 헬스체크하는 엔드포인트
 
     @GetMapping
     public ResponseEntity<String> health() {
-        return ResponseEntity.ok("연결 성공1");
+        return ResponseEntity.ok("연결 성공2");
     }
 
 }
