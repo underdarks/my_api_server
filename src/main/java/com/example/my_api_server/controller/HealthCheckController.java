@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Slf4j
 @RequestMapping("/health")
-public class HealthCheck {
+public class HealthCheckController { //ALB가 헬스체크하는 엔드포인트(/health 경로확인)
 
     @GetMapping
     public ResponseEntity<String> health() {
-        return ResponseEntity.ok("GOOD2");
+        return ResponseEntity.ok("연결 성공1");
     }
 
 }

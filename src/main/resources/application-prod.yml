@@ -1,9 +1,11 @@
 # ======================================================
 # Production 환경 설정 (application-prod.yml)
 # ======================================================
+
 logging:
   level:
     root: WARN
+
 
 spring:
   config:
@@ -19,7 +21,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update # validate, none 사용권장(테스트를 위해 update 사용)
+      ddl-auto: update # none, validation(권장)
     show-sql: false
     open-in-view: false
 
