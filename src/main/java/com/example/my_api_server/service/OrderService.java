@@ -41,6 +41,9 @@ public class OrderService {
      */
     @Transactional
     public OrderResponseDto createOrder(OrderCreateDto dto) {
+        //플랫폼 스레드 생성 -> jvm system call(jni) -> 커널에게 스레드 생성해줘!
+        //커널의 핸들값을 스레드 객체가 내부적으로 관리합니다.
+        //핸들값으로 커널 스레드를 사용한다.
         Member member = memberRepo.findById(dto.memberId())
             .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
 //        //주문 시간에 대해서 값 범위 값을 통해서 로직을 수행한다고 가정

@@ -10,7 +10,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - test-postgres_volume:/var/lib/postgresql
+      - test2-postgres_volume:/var/lib/postgresql
 
   influxdb:
     image: influxdb:1.8
@@ -68,7 +68,7 @@ services:
       - postgres
 
 volumes:
-  test-postgres_volume:
+  test2-postgres_volume:
   test-influxdb-data:
   test-grafana-data:
   test-prometheus-data:

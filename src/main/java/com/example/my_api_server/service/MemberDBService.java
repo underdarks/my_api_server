@@ -27,6 +27,8 @@ public class MemberDBService {
      * Spring 자동으로해줍니다
      */
     //기본적으로 런타임 예외만 롤백해주는데, IOException 예외로 롤백해주겟다!
+
+    //스레드는 platformthread1(worker thread1)번
     @Transactional
     public Long signUp(String email, String password) throws IOException {
         Member member = Member.builder()
@@ -34,6 +36,11 @@ public class MemberDBService {
             .password(password)
             .build();
 
+        //동기 - 작업이 완료될떄까지 기다린다.
+        //비동기 - 작업이 완료될떄까지 기다리지않는다.
+
+        //동기/블로킹
+        //i/o 발생한다고 가정 해당 스레드는 잡니다.(Blocking)
         Member savedMember = memberDBRepo.save(member); //1s
         //DB에 커밋이 정상적으로 잘 된다면(일꾼1), 그때 메일 알림을 발송하면 어떨까요?(일꾼2, 재시도 3번)
         //기능 안정성 + 예외 상황 + 알림이 몇초가 x -> 전체의 총 서버의 응답시간은 단축되지 않을까요?
@@ -44,6 +51,7 @@ public class MemberDBService {
             1L);//기존로직(다른 서비스에서 메일 보냈다)
 
         //변경지점이 되게 작아지게되는 유지보수성 Up(강결합 해결)
+        //비동기,블로킹
         publisher.publishEvent( //리팩토링 후 로직(이벤트)
             new MemberSignUpEvent(savedMember.getId(), savedMember.getEmail(), "d")); //이벤트 발송
 
